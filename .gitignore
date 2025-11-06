@@ -1,1 +1,32 @@
 README.md
+
+# Virtual Environment
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Dataset (too large)
+data/
+archive/
+*.zip
+
+# Models (can be too large)
+models/*.h5
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test images
+test_images/
+
