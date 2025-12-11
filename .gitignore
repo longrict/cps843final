@@ -27,6 +27,13 @@ models/*.h5
 .DS_Store
 Thumbs.db
 
-# Test images
-test_images/
+# Test  and training images
+test/
+train/
+
+
+# predictions
+runs/predict/*
+
+
 
