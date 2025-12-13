@@ -1,0 +1,134 @@
+\documentclass[conference]{IEEEtran}
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{float}
+
+\begin{document}
+
+\title{Real-Time Traffic Signal Detection for Live Video Streams Using YOLOv8}
+
+\author{
+\IEEEauthorblockN{Hareesh Suresh, Longric Tran, Sheel Patel}
+\IEEEauthorblockA{Department of Computer Science\\
+Toronto Metropolitan University\\
+Toronto, Ontario, Canada\\
+\{hsuresh, longric.tran, s60patel\}@torontomu.ca}
+}
+
+\maketitle
+
+%==============================================================================
+% ABSTRACT
+%==============================================================================
+\begin{abstract}
+This project builds a real-time traffic sign detection system using YOLOv8. The goal is to detect and classify traffic signs in live video while keeping latency low enough for practical use. We fine tuned a pre trained YOLOv8 model on a traffic signs dataset with four sign categories: prohibitory, danger, mandatory, and other. The system runs through a simple pipeline that includes training, testing, and real time detection via webcam using OpenCV. Our results show that YOLOv8 works well for this task, achieving solid detection accuracy while maintaining real time speeds.
+
+\vspace{0.5em}
+\noindent\textbf{Source Code:} \url{https://github.com/longrict/cps843final/}
+\end{abstract}
+
+%==============================================================================
+% INTRODUCTION
+%==============================================================================
+\section{Introduction}
+
+Traffic signs are everywhere on the road, and being able to detect them automatically is becoming more important as cars get smarter. Self driving cars, driver assistance systems, and even dashcam apps all benefit from knowing what signs are nearby. The challenge is doing this quickly and accurately. Nobody wants their car to recognize a stop sign three seconds after they've already passed it.
+
+There are different ways to approach this problem. Older methods used hand crafted features and traditional machine learning, but these struggled with things like different lighting conditions or signs that were partially blocked. Deep learning changed the game, and one of the most popular approaches is YOLO (You Only Look Once). Unlike other detectors that look at an image multiple times, YOLO processes the whole image in one pass, making it fast enough for real time use.
+
+For this project, we chose YOLOv8, the latest version of YOLO developed by Ultralytics. We wanted to build something that could actually work in the real world, detecting signs from a webcam feed, not just on pre saved images. Our system handles four types of traffic signs: prohibitory signs (like speed limits and no entry), danger signs (warnings about curves or roadwork), mandatory signs (turn right, keep left, etc.), and other regulatory signs.
+
+The project has three main parts: training the model on a traffic sign dataset, testing it to make sure it works, and running it live on a webcam. Everything is built with PyTorch and OpenCV, keeping the setup straightforward.
+
+%==============================================================================
+% TECHNICAL PART
+%==============================================================================
+\section{Technical Approach}
+
+\subsection{Why YOLOv8?}
+
+We picked YOLOv8 for a few reasons. First, it's fast. Since no one in our group had the latest Nvidia GPU, we wanted something lightweight and easy to train and tweak, while still being fast enough to process video frames in real time without significant lag. Second, it's accurate, especially for small objects, and significantly more accurate than the results we got when testing with the CNN model we initially started with. Lastly, the Ultralytics library makes it easy to use. You can train, test, and deploy a model with just a few lines of Python code, keeping code simple and easy to understand and modify for future iterations.
+
+\subsection{How YOLOv8 Works}
+
+YOLOv8 has three main parts:
+
+The architecture has three main parts: the \textbf{backbone}, \textbf{neck}, and \textbf{head}. The backbone is a pre trained convolutional neural network (CNN) that extracts features from the input image at different levels. The neck merges these features together using something called a Feature Pyramid Network (FPN), which helps the model detect objects of different sizes. Finally, the head takes these combined features and outputs the final predictions, including bounding boxes and class labels \cite{viso_yolov8}.
+
+What makes YOLOv8 stand out from earlier versions are a few key improvements. It uses a decoupled head, which separates classification and localization into different branches so each can focus on its own task. It also uses anchor free detection, meaning it doesn't rely on predefined box shapes to make predictions. YOLOv8 also uses mosaic data augmentation during training, which combines four images into one to help the model learn from more varied examples \cite{viso_yolov8}.
+
+\subsection{Training Process}
+
+TODO: THis section need to be done
+
+\subsection{Real-Time Detection}
+
+TODO: This section needs to be done
+%==============================================================================
+% EXPERIMENTS
+%==============================================================================
+\section{Experiments}
+
+\subsection{Dataset}
+
+TODO: This section needs to be done
+
+\subsection{Training Setup}
+
+TODO: This section needs to be completed
+
+\subsection{Evaluation Metrics}
+
+TODO: Need to look at the code to understand how it works
+
+\subsection{Results}
+
+TODO: What are the result i don't really know what to say here
+
+
+
+
+\subsection{Real Time Performance}
+
+After training, which took some time as the model adjusted and optimized the weights for each class, the test script ran smoothly. The model was able to predict stop signs and other traffic signs with around 70 to 80 percent accuracy. When running real time detection using the laptop's webcam, the system performed smoothly with minimal lag, making it responsive enough for practical use. Testing was done on a standard laptop without a dedicated GPU, which shows that YOLOv8's nano version is lightweight enough for everyday hardware.
+
+\subsection{What Worked and What Didn't}
+
+\textbf{What worked well:}
+\begin{itemize}
+    \item Regulatory signs (like stop signs) were detected reliably. They have distinctive shapes and colours, and were spotted from various angles.
+    \item TODO:add the other things that work. I was only able to test it with a stop sign 
+\end{itemize}
+
+\textbf{Challenges we encountered:}
+\begin{itemize}
+    \item Signs that are very far away (small in the image) are harder to detect.
+    \item Signs displayed on a phone screen were difficult to detect. Only the stop sign was recognized reliably, and only when held directly facing the camera.
+\end{itemize}
+
+%==============================================================================
+% CONCLUSION
+%==============================================================================
+\section{Conclusion}
+
+TODO:Conclusion need to be added here  
+
+
+%==============================================================================
+% REFERENCES
+%==============================================================================
+\begin{thebibliography}{00}
+
+\bibitem{kaggle_dataset}
+P. K. Darabi, ``Traffic Signs Detection Using YOLOv8,'' Kaggle, 2023. [Online]. Available: \url{https://www.kaggle.com/code/pkdarabi/traffic-signs-detection-using-yolov8}
+
+\bibitem{viso_yolov8}
+Viso.ai, ``YOLOv8: A Complete Guide,'' 2023. [Online]. Available: \url{https://viso.ai/deep-learning/yolov8-guide/}
+\end{thebibliography}
+
+\end{document}
