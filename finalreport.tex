@@ -79,7 +79,11 @@ What makes YOLOv8 stand out from earlier versions are a few key improvements. It
 
 \subsection{Training Process}
 
-TODO: THis section need to be done
+The training configuration was kept simple. We trained for 50 epochs with an image size of 416 pixels and a batch size of 16. The dataset configuration was stored in a YAML file (trafficsigns.yaml), which told the model where to find the training and validation images and what classes to look for. Training was done on a GPU to speed things up.
+
+During training, YOLOv8 applies mosaic data augmentation, which combines four training images into one. This exposes the model to more varied object arrangements and scales in each batch, helping it generalize better to real world conditions. The augmentation is automatically turned off in the last ten epochs to let the model fine tune on cleaner examples \cite{viso_yolov8}.
+
+Using a pre trained model as a starting point saved us a lot of time. Instead of learning from scratch, the model already understood basic visual features like edges, shapes, and textures. We only needed to teach the differences between a stop sign and a speed limit sign. This approach is called transfer learning, and it typically gives better results than training a model from nothing, especially when working with a smaller dataset \cite{viso_yolov8}.
 
 \subsection{Real-Time Detection}
 
@@ -91,7 +95,29 @@ TODO: This section needs to be done
 
 \subsection{Dataset}
 
-TODO: This section needs to be done
+We used the Traffic Signs Detection dataset from Kaggle, created by P.K. Darabi. The dataset is formatted for YOLO, with each image having a corresponding annotation file. The annotations follow the standard YOLO format:
+\begin{verbatim}
+    [class_id] [center_x] [center_y] 
+            [width] [height]
+\end{verbatim}
+The coordinates are normalized (values between 0 and 1), which makes them work regardless of image size. Images in the dataset are 416x416 pixels with 3 color channels.
+The dataset contains 15 classes focused on speed limits, traffic lights, and stop signs:
+\begin{table}[h]
+\centering
+\caption{Traffic Sign Classes in Dataset}
+\label{tab:categories}
+\begin{tabular}{ll}
+\toprule
+\textbf{Category} & \textbf{Classes} \\
+\midrule
+Traffic Lights & Green Light, Red Light \\
+Speed Limits & 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 km/h \\
+Regulatory & Stop \\
+\bottomrule
+\end{tabular}
+\end{table}
+The dataset was split into three sets: 3,530 images for training, 801 images for validation, and a separate test set for final evaluation.
+Before training our own model, we tested the default pre trained YOLOv8 model on the dataset to see how it would perform. Since the default model was trained on general objects (the COCO dataset), it returned no detections when given a traffic sign image. This confirmed that we needed to fine tune the model on our specific dataset to get it to recognize traffic signs \cite{kaggle_dataset}.
 
 \subsection{Training Setup}
 
