@@ -17,7 +17,7 @@
 \IEEEauthorblockA{Department of Computer Science\\
 Toronto Metropolitan University\\
 Toronto, Ontario, Canada\\
-\{hsuresh, longric.tran, s60patel\}@torontomu.ca}
+hsuresh@torontomu.ca, longric.tran@torontomu.ca, s60patel@torontomu.ca}
 }
 
 \maketitle
@@ -26,7 +26,11 @@ Toronto, Ontario, Canada\\
 % ABSTRACT
 %==============================================================================
 \begin{abstract}
-This project builds a real-time traffic sign detection system using YOLOv8. The goal is to detect and classify traffic signs in live video while keeping latency low enough for practical use. We fine tuned a pre trained YOLOv8 model on a traffic signs dataset with four sign categories: prohibitory, danger, mandatory, and other. The system runs through a simple pipeline that includes training, testing, and real time detection via webcam using OpenCV. Our results show that YOLOv8 works well for this task, achieving solid detection accuracy while maintaining real time speeds.
+This project aims to build a real-time traffic sign detection system by fine-tuning a pre-existing YOLOv8 model. The goal is to detect and classify traffic signs in live video
+while keeping latency low enough for practical use. To achieve our goal, a pre-trained YOLOv8 model was retrained on a traffic signs dataset with fifteen  
+labels for various signals, and regulatory signs. The system runs through a simple pipeline that includes training, testing, and real 
+time detection via webcam using OpenCV. Our results show that YOLOv8 works well for this task, achieving solid detection accuracy while maintaining reasonable
+detection speed.
 
 \vspace{0.5em}
 \noindent\textbf{Source Code:} \url{https://github.com/longrict/cps843final/}
@@ -37,13 +41,24 @@ This project builds a real-time traffic sign detection system using YOLOv8. The 
 %==============================================================================
 \section{Introduction}
 
-Traffic signs are everywhere on the road, and being able to detect them automatically is becoming more important as cars get smarter. Self driving cars, driver assistance systems, and even dashcam apps all benefit from knowing what signs are nearby. The challenge is doing this quickly and accurately. Nobody wants their car to recognize a stop sign three seconds after they've already passed it.
+Traffic and regulatory signs have the important role of quickly and effectively communicating rules and warnings to drivers across the world. As demand for self-driving cars, 
+and driver assistance systems grows, the need for automatic detection and classification systems becomes clear. The main challenges in developing such products however, relates to
+balancing the accuracy of the predictions and the speed at which detections can be made. Such systems must also function under different environmental conditions including changes in
+lighting, occlusion and weather. 
 
-There are different ways to approach this problem. Older methods used hand crafted features and traditional machine learning, but these struggled with things like different lighting conditions or signs that were partially blocked. Deep learning changed the game, and one of the most popular approaches is YOLO (You Only Look Once). Unlike other detectors that look at an image multiple times, YOLO processes the whole image in one pass, making it fast enough for real time use.
+Many approaches have been created to approach this problem. Many early methods relied heavily on domain knowledge and hand crafted features, but were not robust and would struggle under varying 
+environmental conditions. A newer approach through the usage of deep learning and Convolutional Neural Networks (CNN), which learn directly from the data rather than from human intervention, offers
+significantly improved robustness and accuracy enabling models to better generalize to varying signs and conditions.
 
-For this project, we chose YOLOv8, the latest version of YOLO developed by Ultralytics. We wanted to build something that could actually work in the real world, detecting signs from a webcam feed, not just on pre saved images. Our system handles four types of traffic signs: prohibitory signs (like speed limits and no entry), danger signs (warnings about curves or roadwork), mandatory signs (turn right, keep left, etc.), and other regulatory signs.
+One popular approach uses a CNN-based framework called You Only Look Once (YOLO) for object detection.
+Unlike other detectors that look at an image multiple times, YOLO processes the whole image in one pass, significantly improving speeds and enabling its usage for real-time detection.
 
-The project has three main parts: training the model on a traffic sign dataset, testing it to make sure it works, and running it live on a webcam. Everything is built with PyTorch and OpenCV, keeping the setup straightforward.
+For this project YOLOv8, a YOLO-style developed by Ultralytics, was chosen as a base object detection framework.
+
+The project is composed of three main parts:
+1. Model training on a traffic data set.
+2. Validation on a test set of still images to measure accuracy.
+3. Live tests on a webcam through the usage of OpenCV.
 
 %==============================================================================
 % TECHNICAL PART
