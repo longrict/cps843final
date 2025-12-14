@@ -11,7 +11,5 @@ if __name__ == "__main__":
         imgsz=416,
         batch=16,
         name="traffic_signs_yolov8",
-        device=0  # GPU 0
+        device="mps"  # GPU 0 for windows, "mps" for macOS
     )
-
-
