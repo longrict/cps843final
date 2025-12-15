@@ -34,6 +34,9 @@ train/
 
 # predictions
 runs/predict/*
+runs/
+*.pt
 
 
 
+# Sheel Files to ignore

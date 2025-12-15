@@ -1,0 +1,199 @@
+MODEL ACCURACY RESULTS
+======================================================================
+
+MODEL: yolov11s_baseline
+----------------------------------------------------------------------
+Parameters: base=yolo11s.pt, epochs=50, img_size=416, batch=16
+
+Overall Results:
+  Precision: 96.8%
+  Recall: 88.1%
+  mAP@0.5: 94.7%
+  mAP@0.5:0.95: 83.2%
+
+Per Sign Results:
+  Green Light: 79.5%
+  Red Light: 77.6%
+  Speed Limit 10: 99.0%
+  Speed Limit 100: 98.0%
+  Speed Limit 110: 99.3%
+  Speed Limit 120: 98.6%
+  Speed Limit 20: 98.4%
+  Speed Limit 30: 98.9%
+  Speed Limit 40: 96.2%
+  Speed Limit 50: 96.2%
+  Speed Limit 60: 98.7%
+  Speed Limit 70: 99.3%
+  Speed Limit 80: 85.6%
+  Speed Limit 90: 99.5%
+
+======================================================================
+
+MODEL: yolov8s_IS512
+----------------------------------------------------------------------
+Parameters: base=yolov8s.pt, epochs=50, img_size=512, batch=16
+
+Overall Results:
+  Precision: 93.8%
+  Recall: 93.0%
+  mAP@0.5: 96.2%
+  mAP@0.5:0.95: 84.3%
+
+Per Sign Results:
+  Green Light: 83.5%
+  Red Light: 81.0%
+  Speed Limit 10: 98.9%
+  Speed Limit 100: 98.5%
+  Speed Limit 110: 99.4%
+  Speed Limit 120: 98.7%
+  Speed Limit 20: 98.9%
+  Speed Limit 30: 99.1%
+  Speed Limit 40: 98.9%
+  Speed Limit 50: 97.6%
+  Speed Limit 60: 98.2%
+  Speed Limit 70: 99.2%
+  Speed Limit 80: 95.9%
+  Speed Limit 90: 99.5%
+
+======================================================================
+
+MODEL: yolov8s_baseline
+----------------------------------------------------------------------
+Parameters: base=yolov8s.pt, epochs=50, img_size=416, batch=16
+
+Overall Results:
+  Precision: 95.6%
+  Recall: 90.8%
+  mAP@0.5: 94.7%
+  mAP@0.5:0.95: 83.1%
+
+Per Sign Results:
+  Green Light: 78.7%
+  Red Light: 77.4%
+  Speed Limit 10: 99.3%
+  Speed Limit 100: 99.5%
+  Speed Limit 110: 99.5%
+  Speed Limit 120: 98.7%
+  Speed Limit 20: 98.5%
+  Speed Limit 30: 99.1%
+  Speed Limit 40: 95.6%
+  Speed Limit 50: 96.0%
+  Speed Limit 60: 98.8%
+  Speed Limit 70: 99.4%
+  Speed Limit 80: 86.1%
+  Speed Limit 90: 99.4%
+
+======================================================================
+
+MODEL: yolov8n_IS512
+----------------------------------------------------------------------
+Parameters: base=yolov8n.pt, epochs=50, img_size=512, batch=16
+
+Overall Results:
+  Precision: 95.6%
+  Recall: 91.0%
+  mAP@0.5: 95.3%
+  mAP@0.5:0.95: 82.9%
+
+Per Sign Results:
+  Green Light: 79.8%
+  Red Light: 80.1%
+  Speed Limit 10: 99.1%
+  Speed Limit 100: 97.9%
+  Speed Limit 110: 99.5%
+  Speed Limit 120: 98.6%
+  Speed Limit 20: 99.1%
+  Speed Limit 30: 98.9%
+  Speed Limit 40: 97.6%
+  Speed Limit 50: 96.9%
+  Speed Limit 60: 97.4%
+  Speed Limit 70: 97.8%
+  Speed Limit 80: 91.3%
+  Speed Limit 90: 99.5%
+
+======================================================================
+
+MODEL: yolov8n_baseline
+----------------------------------------------------------------------
+Parameters: base=yolov8n.pt, epochs=50, img_size=416, batch=16
+
+Overall Results:
+  Precision: 96.7%
+  Recall: 87.2%
+  mAP@0.5: 93.0%
+  mAP@0.5:0.95: 81.5%
+
+Per Sign Results:
+  Green Light: 73.8%
+  Red Light: 71.5%
+  Speed Limit 10: 97.7%
+  Speed Limit 100: 95.7%
+  Speed Limit 110: 99.5%
+  Speed Limit 120: 98.6%
+  Speed Limit 20: 98.2%
+  Speed Limit 30: 99.0%
+  Speed Limit 40: 94.2%
+  Speed Limit 50: 94.9%
+  Speed Limit 60: 98.3%
+  Speed Limit 70: 98.3%
+  Speed Limit 80: 83.2%
+  Speed Limit 90: 99.5%
+
+======================================================================
+
+MODEL: yolov8m_IS512
+----------------------------------------------------------------------
+Parameters: base=yolov8m.pt, epochs=50, img_size=512, batch=16
+
+Overall Results:
+  Precision: 96.3%
+  Recall: 85.1%
+  mAP@0.5: 93.4%
+  mAP@0.5:0.95: 79.8%
+
+Per Sign Results:
+  Green Light: 76.7%
+  Red Light: 72.7%
+  Speed Limit 10: 98.5%
+  Speed Limit 100: 96.2%
+  Speed Limit 110: 99.1%
+  Speed Limit 120: 98.2%
+  Speed Limit 20: 97.7%
+  Speed Limit 30: 98.2%
+  Speed Limit 40: 95.0%
+  Speed Limit 50: 94.5%
+  Speed Limit 60: 97.1%
+  Speed Limit 70: 94.4%
+  Speed Limit 80: 89.3%
+  Speed Limit 90: 99.4%
+
+======================================================================
+
+MODEL: yolov8m_baseline
+----------------------------------------------------------------------
+Parameters: base=yolov8m.pt, epochs=50, img_size=416, batch=16
+
+Overall Results:
+  Precision: 96.0%
+  Recall: 90.5%
+  mAP@0.5: 95.1%
+  mAP@0.5:0.95: 83.4%
+
+Per Sign Results:
+  Green Light: 81.8%
+  Red Light: 76.0%
+  Speed Limit 10: 99.0%
+  Speed Limit 100: 96.3%
+  Speed Limit 110: 99.5%
+  Speed Limit 120: 98.7%
+  Speed Limit 20: 98.8%
+  Speed Limit 30: 98.9%
+  Speed Limit 40: 98.0%
+  Speed Limit 50: 97.5%
+  Speed Limit 60: 98.8%
+  Speed Limit 70: 99.5%
+  Speed Limit 80: 90.0%
+  Speed Limit 90: 99.4%
+
+======================================================================
+
