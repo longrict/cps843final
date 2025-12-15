@@ -33,7 +33,8 @@ time detection via webcam using OpenCV. Our results show that YOLOv8 works well 
 detection speed.
 
 \vspace{0.5em}
-\noindent\textbf{Source Code:} \url{https://github.com/longrict/cps843final/}
+\noindent\textbf{Source Code:} \url{https://github.com/longrict/cps843final/} \\
+\noindent\textbf{Models:} \url{https://drive.google.com/drive/u/2/folders/12RkMa4FyQbNXTnuyKX-fnqXVLK3Kdh-9}
 \end{abstract}
 
 %==============================================================================
@@ -143,30 +144,45 @@ Regulatory & Stop \\
 The dataset was split into three sets: 3,530 images for training, 801 images for validation, and a separate test set for final evaluation.
 Before training our own model, we tested the default pre trained YOLOv8 model on the dataset to see how it would perform. Since the default model was trained on general objects (the COCO dataset), it returned no detections when given a traffic sign image. This confirmed that we needed to fine tune the model on our specific dataset to get it to recognize traffic signs \cite{kaggle_dataset}.
 
-
 \subsection{Training Procedure and Configuration}
-TODO: describe final configuration after experiments
 
-Starting with a base YOLOv8 model, accuracy was further improved by re-training it with a more traffic-sign-specific dataset outlined in the previous
-section. Training was conducted using the Ultralytics YOLO framework built on PyTorch.
-Configuration details are summarized in Table \ref{tab:trainingparameters}.
-
+During the experimental stage, we tested different model configurations to find the best setup for our traffic sign detection system. 
+A systematic approach was followed, starting with baseline models and then adjusting variables one at a time to understand their impact. 
+We experimented with multiple models adjusting three main variables: the base model size, the image size, and different versions of YOLO. 
+To keep all comparisons fair and consistent, all models were trained for 50 epochs and tests were run on the same setup (NVIDIA RTX 3050ti, 4GB VRAM). 
+A summary of the different combinations for each model are listed in Table \ref{tab:trainingcombinations}.
 \begin{table}[h]
 \centering
-\caption{Training Hyperparameters}
-\label{tab:trainingparameters}
-\begin{tabular}{ll}
+\caption{Training Combinations}
+\label{tab:trainingcombinations}
+\begin{tabular}{lllll}
 \toprule
-\textbf{Parameter} & \textbf{Value} \\
+\textbf{Model Name} & \textbf{Base Model} & \textbf{Epoch} & \textbf{Input} & \textbf{Batch} \\
 \midrule
-Base Model & YOLOv8 \\
-Number of Epochs & 50 \\
-Image Input Size & 416 \\
-Batch Size & 16 \\
+YOLOv8n & yolov8n\_baseline & 50 & 416 & 16 \\
+YOLOv8s & yolov8s\_baseline & 50 & 416 & 16 \\
+YOLOv8m & yolov8m\_baseline & 50 & 416 & 16 \\
+YOLOv11s & yolov11s\_baseline & 50 & 416 & 16 \\
+\midrule
+YOLOv8n & yolov8n\_IS512 & 50 & 512 & 16 \\
+YOLOv8s & yolov8s\_IS512 & 50 & 512 & 16 \\
+YOLOv8m & yolov8m\_IS512 & 50 & 512 & 16 \\
+YOLOv11s & yolov11s\_IS512 & 50 & 512 & 16 \\
+\midrule
+YOLOv8n & yolov8n\_IS320 & 50 & 320 & 16 \\
+YOLOv8s & yolov8s\_IS320 & 50 & 320 & 16 \\
+YOLOv8m & yolov8m\_IS320 & 50 & 320 & 16 \\
+YOLOv11s & yolov11s\_IS320 & 50 & 320 & 16 \\
+\midrule
+YOLOv8n & yolov8n\_BS8 & 50 & 416 & 8 \\
+YOLOv8s & yolov8s\_BS8 & 50 & 416 & 8 \\
+YOLOv8m & yolov8m\_BS8 & 50 & 416 & 8 \\
+YOLOv11s & yolov11s\_BS8 & 50 & 416 & 8 \\
 \bottomrule
 \end{tabular}
 \end{table}
-
+\subsection{Evaluation Metrics}
+TODO: talk about mAP, precision, inference time etc. and why they're important to the model we choose
 \subsection{Real-Time Detection}
 
 TODO: This section needs to be done
@@ -175,16 +191,15 @@ TODO: This section needs to be done
 %==============================================================================
 \section{Experiments}
 
-\subsection{Training Setup}
-
-During the experimental stage, we tested different model configurations to find the best setup for our traffic sign detection system. We followed a systematic approach, starting with baseline models and then adjusting variables one at a time to understand their impact. We experimented with multiple models adjusting three main variables: the base model size, the image size, and different versions of YOLO. To keep all comparisons fair and consistent, all models were trained for 50 epochs with  majority of  batch sizes bieng 16 using the same dataset split and hardware configuration.
-
 \subsection{Base Model Comparison}
 
-We started by establishing baseline results using three different YOLOv8 model sizes. The nano model (yolov8n) is the smallest variant with approximately 3 million parameters. The small model (yolov8s) contains around 11 million parameters. The medium model (yolov8m) is the largest we tested with roughly 26 million parameters. All three were trained using the standard input resolution of 416x416 pixels.
+To have a baseline to evaluate the effectiveness for each hyperparameter change, four baseline models were trained
+with a standard configuration included in Table \ref{tab:trainingcombinations}. Each of the four used a different version
+of Ultralytic's YOLO model family, with three using various versions of YOLOv8, and the other using YOLOv11.
 
-
-After training completed, we ran our accuracy test script on each model. The results are shown in Table \ref{tab:baseline}.
+Specifically, the models YOLOv8n, YOLOv8s and YOLOv8m were chosen from the v8 line for their strong performance
+and lower training times compared to the larger models. YOLOv11s was chosen to enable comparison between the older v8 models
+and a more modern variant. After training completed, an accuracy test script was run on each model. The results are shown in Table \ref{tab:baseline}.
 
 \begin{table}[h]
 \centering
@@ -194,118 +209,259 @@ After training completed, we ran our accuracy test script on each model. The res
 \hline
 \textbf{Model} & \textbf{Precision} & \textbf{Recall} & \textbf{mAP@0.5} & \textbf{Inference} \\
 \hline
-yolov8n & 96.7\% & 87.2\% & 93.0\% & 70ms \\
-yolov8s & 95.6\% & 90.8\% & 94.7\% & 142ms \\
-yolov8m & 96.0\% & 90.5\% & 95.1\% & 261ms \\
+yolov8n\_baseline & 87.0\% & 84.9\% & 90.6\% & 3ms \\
+yolov8s\_baseline & 90.9\% & 89.9\% & 93.6\% & 5ms \\
+yolov8m\_baseline & 95.9\% & 87.6\% & 94.0\% & 10ms \\
+yolov11s\_baseline & 93.9\% & 90.6\%& 94.5\% & 5ms \\
 \hline
 \end{tabular}
 \end{table}
 
- The resulted showed that the nano baseline achieved 93.0\% mAP@0.5, the small baseline achieved 94.7\%, and the medium baseline achieved 95.1\%. This confirmed that larger model with more trainable parameters produce better accuracy. However, the improvement from nano to medium was only about 2 percentage points, which suggests that even the smallest model captures enough features to perform well on this dataset. This is likely because traffic signs have consistent shapes and colors that do not require extremely deep feature extraction.
+As expected, as the model size increases (nano to medium), precision, recall and mAP@0.5 increases while the inference speed decreases due
+to the greater computational requirements. Larger models have greater representational capacity, but processing each image
+has a greater computational cost with each increase in model size almost doubling the average inference time of its predecessor. 
 
-We also measured the inference speed of each model. The nano model processed each image approximately 70ms, while the medium model required around 261ms  per image. On our test hardware, this translates to roughly 14 frames per second for the nano model and only 4 frames per second for the medium model. This finding was important because it showed us that the medium model, despite being slightly more accurate, would be too slow for smooth real time video detection.
+It should be noted however, that the YOLOv11 small model had comparable results to the YOLOv8 medium model with a significantly
+faster inference speed. This can be attributed to YOLOv11 using more modern architecture and techniques to achieve greater results 
+at a lower computational cost.
 
-Based on these results, we concluded that the nano and small models were better suited for our real time application. The medium model's marginal accuracy gain did not justify its significantly slower inference speed.
+From these, we can conclude that the newer models, such as YOLOv11, are able to achieve comparable or better results than larger
+and older models while maintaining faster inference speeds. This suggests that achitectural improvements can offset the need of 
+larger models typically are more accurate.
 
 \subsection{Image Size Experiments}
-Now that we have established our baselines, we wanted to see whether increasing the input size (image resolution) would improve accuracy. Our prediction were that larger images preserver more spatial details allowing the model to detect smaller signs that appear far away from the frame. We trained all three models again using 512px input resolution compared to the previous 416px.
+To evaluate the effect of image size on model performance, each baseline model was reconfigured to use both larger (512x512) and
+smaller (320x320) input images. It should be noted that the images in the dataset were not altered and remained at (412x512), but
+were resized by the training library. The models were then re-tested using the same performance script and the results
+are shown in Tables \ref{tab:imagesizeprecision} to \ref{tab:imagesizeinference}.
 
 \begin{table}[h]
 \centering
-\caption{Image Size Comparison (512px vs 416px baseline)}
-\label{tab:imagesize}
+\caption{Image Size Comparison (precision)}
+\label{tab:imagesizeprecision}
 \begin{tabular}{|l|c|c|c|}
 \hline
-\textbf{Model} & \textbf{416px mAP@0.5} & \textbf{512px mAP@0.5} & \textbf{Change} \\
+\textbf{Base Model} & \textbf{320px} & \textbf{512px} & \textbf{Baseline Model Changes} \\
 \hline
-yolov8n & 93.0\% & 95.3\% & +2.3\% \\
-yolov8s & 94.7\% & 96.2\% & +1.5\% \\
-yolov8m & 95.1\% & 93.4\% & -1.7\% \\
-\hline
-\end{tabular}
-\end{table}
-
-The results in Table \ref{tab:imagesize} confirmed are hypothesis for smaller models. The nano model improved from 93\% to 95\% mAP@0.5, a gain of 2.3 percentage. The small model improved from 94.7\% to 96.7\%. This increase showed that the additional spatial information gained from the higher resolution images helps the feature extract layers capture finer details. 
-
-We also notices that the yolov8m (medium model)  had some unexpected results going from 95.1\% to 93.4\%, a decrease of 1.5 percentage when increased to a larger image size. After some analysis we presume that the model is overfitting at the higher resolution. The larger model with more parameters may have started to memorize the training example rather than learning the generalized features. 
-
-The detailed results are shown in Table \ref{tab:is512}.
-\begin{table}[h]
-\centering
-\caption{512px Model Results}
-\label{tab:is512}
-\begin{tabular}{|l|c|c|c|c|}
-\hline
-\textbf{Model} & \textbf{Precision} & \textbf{Recall} & \textbf{mAP@0.5} & \textbf{mAP@0.5:0.95} \\
-\hline
-yolov8n\_IS512 & 95.6\% & 91.0\% & 95.3\% & 82.9\% \\
-yolov8s\_IS512 & 93.8\% & 93.0\% & 96.2\% & 84.3\% \\
-yolov8m\_IS512 & 96.3\% & 85.1\% & 93.4\% & 79.8\% \\
+yolov8n & 83.8\% & 89.5\% & -3.2\%, +2.5 \% \\
+yolov8s & 91.9\% & 95.9\% & +1\%, +5\% \\
+yolov8m & 94.1\% & 92.8\% & -1.8\%, -3.1\% \\
+yolov11s& 92.2\% & 95.4\% & -1.7\%,+1.5\% \\
 \hline
 \end{tabular}
 \end{table}
-From this experiment, we learned that bigger is not always better. The small model with 512 pixel images achieved the best overall result at 96.2\% mAP@0.5, outperforming even the larger medium model. It also achieved the highest mAP@0.5:0.95 at 84.3\%, indicating more precise bounding box predictions.
-
-\subsection{YOLOv11 Comparison}
-After experimenting around YOLOV8 configurations, we wanted to also test whether the newer YOLOv11 architecture would perform better. We trained the YOLOv11 small model using the intial 416px image to compare it directly against YOLOv8.
 
 \begin{table}[h]
 \centering
-\caption{YOLOv8 vs YOLOv11 Comparison}
-\label{tab:yolov11}
-\begin{tabular}{|l|c|c|c|c|}
+\caption{Image Size Comparison (recall)}
+\label{tab:imagesizerecall}
+\begin{tabular}{|l|c|c|c|}
 \hline
-\textbf{Model} & \textbf{Precision} & \textbf{Recall} & \textbf{mAP@0.5} & \textbf{mAP@0.5:0.95} \\
+\textbf{Base Model} & \textbf{320px} & \textbf{512px} & \textbf{Baseline Model Change} \\
 \hline
-yolov8s\_baseline & 95.6\% & 90.8\% & 94.7\% & 83.1\% \\
-yolov11s\_baseline & 96.8\% & 88.1\% & 94.7\% & 83.2\% \\
+yolov8n & 79.9\% & 89.6\% & -5.0\%, +4.7\%\\
+yolov8s & 85.8\% & 91.3\% & -4.1\%, +1.4\%\\
+yolov8m & 84.7\% & 85.6\% & -2.9\%, -2.0\%\\
+yolov11s& 85.8\% & 91.6\% & -4.8\%, +1.0\%\\
 \hline
 \end{tabular}
 \end{table}
 
-The results in Table \ref{tab:yolov11} showed that YOLOv11 achieved 94.7\% mAP@0.5, which matched the YOLOv8 small baseline exactly. At first glance, this suggested the two architectures perform equally well on our dataset.
+\begin{table}[h]
+\centering
+\caption{Image Size Comparison (mAP@0.5)}
+\label{tab:imagesizemAP}
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Base Model} & \textbf{320px} & \textbf{512px} & \textbf{Baseline Model Change} \\
+\hline
+yolov8n & 86.1\% & 93.7\% & -4.5\%, +3.1\% \\
+yolov8s & 91.2\% & 94.2\% & -2.4\%, +0.6\% \\
+yolov8m & 91.7\% & 92.7\% & -2.3\%, -1.3\% \\
+yolov11s& 91.7\% & 95.7\% & +1.1\%, +5.1\% \\
+\hline
+\end{tabular}
+\end{table}
 
-However, when we looked at the individual metrics, we noticed an important difference. YOLOv11 achieved higher precision at 96.8\% compared to 95.6\% for YOLOv8, but lower recall at 88.1\% versus 90.8\%. This told us that YOLOv11 is more conservative with its predictions. It produces fewer false positives but misses more actual signs.
+\begin{table}[h]
+\centering
+\caption{Image Size Comparison (inference speed)}
+\label{tab:imagesizeinference}
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Base Model} & \textbf{320px} & \textbf{512px} & \textbf{Baseline Model Change} \\
+\hline
+yolov8n & 2ms & 3ms &  -1ms, 0ms\\
+yolov8s & 3ms & 7ms &  -2ms, +2ms\\
+yolov8m & 7ms & 15ms & -3ms, +5ms\\
+yolov11s& 3ms & 6ms & -2ms, +1ms\\
+\hline
+\end{tabular}
+\end{table}
 
-For a traffic sign detection system, we decided that recall is more important than precision. Missing a stop sign or speed limit could have serious safety consequences, while a false detection is just a minor inconvenience. Based on this reasoning, we chose to stick with YOLOv8 for our final system.
+Overall image size changes significantly impact a model's performance. In general, a smaller image size 
+reduces the model's precision, recall, and mAP@0.5 while increasing inference speed. This occurs because 
+smaller images contain less spatial detail and make it more difficult for the model to detect small and distant
+objects. Specifically, recall was impacted the most based on the results.
 
+Conversely, larger and higher resolution images contain more spatial detail and preserve more information, but 
+require greater resources to process. For the largest model, YOLOv8m, the inference speed increased by nearly 33\%.
+
+It should be noted that in some cases there were unexpected results. In some models the smaller image size increased 
+accuracy. This however, is not consistent throughout all models, and some classes may have benefitted from the smaller
+resolution via reduced overfitting or more consistent object scales.
+
+From this experiment, it is clear that reducing the input size of the image greatly increases speed but at a cost of
+accuracy. Therefore, selecting an appropriate image size requires balancing the trade-off between faster inferencing and 
+maintaining acceptable performance.
+
+\subsection{Batch Size}
+For each baseline model, a variant with a smaller batch size of 8 was trained. Larger batch size variants (32) were attempted,
+however they could not be trained due to the memory limitations of our setup. The performance of each version is shown in 
+Tables \ref{tab:bs8precision} to \ref{tab:bs8inference}.
+
+\begin{table}[h]
+\centering
+\caption{Batch Size 8 Comparison (Precision)}
+\label{tab:bs8precision}
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Base Model} & \textbf{Baseline} & \textbf{BS8} & \textbf{BS8-Baseline Change} \\
+\hline
+yolov8n  & 87.0\% & 90.4\% & +3.4\% \\
+yolov8s  & 90.9\% & 95.6\% & +4.7\% \\
+yolov8m  & 95.9\% & 94.6\% & -1.3\% \\
+yolov11s & 93.9\% & 93.4\% & -0.5\% \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Batch Size 8 Comparison (Recall)}
+\label{tab:bs8recall}
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Base Model} & \textbf{Baseline} & \textbf{BS8} & \textbf{BS8-Baseline Change} \\
+\hline
+yolov8n  & 84.9\% & 85.5\% & +0.6\% \\
+yolov8s  & 89.9\% & 86.9\% & -3.0\% \\
+yolov8m  & 87.6\% & 90.3\% & +2.7\% \\
+yolov11s & 90.6\% & 86.5\% & -4.1\% \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Batch Size 8 Comparison (mAP@0.5)}
+\label{tab:bs8mAP}
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Base Model} & \textbf{Baseline} & \textbf{BS8} & \textbf{BS8-Baseline Change} \\
+\hline
+yolov8n  & 90.6\% & 91.2\% & +0.6\% \\
+yolov8s  & 93.6\% & 93.6\% & 0.0\% \\
+yolov8m  & 94.0\% & 94.5\% & +0.5\% \\
+yolov11s & 94.5\% & 93.0\% & -1.5\% \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Batch Size 8 Comparison (Inference Speed)}
+\label{tab:bs8inference}
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Base Model} & \textbf{Baseline} & \textbf{BS8} & \textbf{BS8-Baseline Change} \\
+\hline
+yolov8n  & 2.5ms & 2.44ms & -0.06ms \\
+yolov8s  & 4.53ms & 4.45ms & -0.08ms \\
+yolov8m  & 10.25ms & 9.93ms & -0.32ms \\
+yolov11s & 4.53ms & 4.34ms & -0.19ms \\
+\hline
+\end{tabular}
+\end{table}
+
+Reducing the batch size of the baseline models had varying affects on each of the performance metrics.
+YOLOv8n and YOLOv8s saw an increase in precision while YOLOv8m and YOLOv11s saw slight decreases. This suggests that
+smaller models benefit from a smaller batch size, likely due to more stable gradient estimates and improved confidence 
+calibration during training or evaluation.
+
+Reducing the batch size has decreased recall for most of the models. is is likely due to less stable gradient estimates during 
+training, which can reduce the model's ability to consistently detect all relevant objects, particularly smaller or less frequent classes.
+
+In terms of inference speed, changing the batch size has negligible effect. All of the models had very slight decreases in
+inference time.
 
 
 \subsection{Per Class Analysis}
+For each model change, performance relative to each object class was analyzed to determine which signs were easiest and 
+hardest to detect. The performance of each model in accurating detecting each class is shown in Table \ref{tab:map_class}.
+It should be noted that the average for the speed signs is listed instead of each speed sign class due to the size
+limitations of this page.
 
-After completing are model experiments, we analyzed which sign types were easier and hardest to detect. Table \ref{tab:perclass} shows the per class accuracy for our best performing model (yolov8s\_IS512) based on recall percentage value.
-
-\begin{table}[h]
+\begin{table}[htbp]
 \centering
-\caption{Per Class Accuracy (yolov8s\_IS512)}
-\label{tab:perclass}
-\begin{tabular}{|l|c|}
+\caption{Performance (mAP@0.5) of YOLO IS Models Across Classes}
+\begin{tabular}{lcccc}
 \hline
-\textbf{Sign Class} & \textbf{mAP\texttt{@}0.5} \\
+\textbf{Model} & \textbf{Green Light} & \textbf{Red Light} & \textbf{Speed Signs} & \textbf{Stop} \\
 \hline
-Stop & 99.5\% \\
-Speed Limit 120 & 98.7\% \\
-Speed Limit 30 & 99.1\% \\
-Speed Limit 70 & 99.2\% \\
-Speed Limit 40 & 98.9\% \\
-Speed Limit 20 & 98.9\% \\
-Speed Limit 100 & 98.5\% \\
-Speed Limit 60 & 98.2\% \\
-Speed Limit 50 & 97.6\% \\
-Speed Limit 110 & 99.4\% \\
-Speed Limit 80 & 95.9\% \\
-Speed Limit 90 & 99.5\% \\
-Green Light & 83.5\% \\
-Red Light & 81.0\% \\
+YOLOv8n\_baseline & 85.0 & 67.9 & 93.0 & 99.5 \\
+YOLOv8n\_BS8       & 84.2 & 67.5 & 94.2 & 99.5 \\
+YOLOv8n\_IS320     & 73.0 & 63.3 & 85.0 & 99.5 \\
+YOLOv8n\_IS512     & 90.8 & 72.2 & 94.2 & 99.5 \\
+YOLOv8s\_baseline & 88.4 & 72.9 & 95.2 & 99.5 \\
+YOLOv8s\_BS8       & 85.4 & 72.5 & 95.0 & 99.5 \\
+YOLOv8s\_IS320     & 78.0 & 68.7 & 93.3 & 99.5 \\
+YOLOv8s\_IS512     & 89.9 & 73.3 & 97.1 & 99.5 \\
+YOLOv8m\_baseline & 88.5 & 71.6 & 95.0 & 99.5 \\
+YOLOv8m\_BS8       & 88.1 & 72.3 & 96.0 & 99.5 \\
+YOLOv8m\_IS320     & 78.1 & 67.6 & 93.1 & 99.5 \\
+YOLOv8m\_IS512     & 87.7 & 71.6 & 94.2 & 99.5 \\
+YOLOv11s\_baseline & 88.9 & 70.2 & 97.0 & 99.5 \\
+YOLOv11s\_BS8      & 86.8 & 68.9 & 95.0 & 99.5 \\
+YOLOv11s\_IS320    & 79.0 & 66.1 & 94.0 & 99.5 \\
+YOLOv11s\_IS512    & 88.9 & 78.6 & 97.0 & 99.5 \\
 \hline
 \end{tabular}
+\label{tab:map_class}
 \end{table}
 
-Speed limit signs achieved the highest accuracy across all configurations, with most exceeding 95\% mAP@0.5. The stop sign performed best overall at 99.5\%. We assume this is due to the distinctive octagonal shape and bright red color of stop signs, which create strong visual features that are easy for the model to identify.
-Traffic lights proved to be the most challenging category. Green lights achieved only 83.5\% and red lights 81.0\%. We identified several reasons for this lower performance. Traffic lights are often smaller in the frame compared to road signs. Their appearance varies depending on lighting conditions and camera angle. The model also has to distinguish between red and green states, which share the same shape and differ only in which light is illuminated.
+Overall, speed limit signs the highest accuracy across all configurations, with most exceeding 90\% mAP@0.5. The stop sign performed best overall at 99.5\% 
+for all models. We assume this is due to the distinctive octagonal shape and bright red color of stop signs, which create strong visual features that are 
+easy for the model to identify. 
 
-\subsection{Result (final configuration}
-TODO: Talk about how we have selected the yolov8s model wiht 512 px as are final confuraiton here is the table with all the infromation 
+Traffic lights proved to be the most challenging category. Red lights were the most difficult to detect with an average prediction accuracy of ~70\%.
+Green lights were also difficult to detect and had an average prediction accuracy of ~83\%.
+
+We identified several reasons for this lower performance based on the confusion matrix (Figure \ref{fig:confusionmatrix}). Often,
+the model would confuse the lights as part of the background rather than as an object. This may be because traffic lights are often smaller in the frame compared to road signs. 
+Their appearance varies depending on lighting conditions and camera angle. The model also has to distinguish between red and green states, 
+which share the same shape and differ only in which light is illuminated. 
+
+\begin{figure}[h]  
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/confusion_matrix_normalized.png}  
+    \caption{Confusion matrix for YOLOv11s\_IS512}
+    \label{fig:confusionmatrix}
+\end{figure}
+
+
+\subsection{Final Configuration}
+For the final configuration, YOLOv11 seemed to be the best base model in terms of balancing accuracy and inference time. 
+YOLOv11s had comparable accuracy to the largest YOLOv8 model we tested, YOLOv8m, while maintaining an inference
+speed similar to YOLOv8s. 
+
+For input image size, we valued accuracy over a slight decrease in inference speed. For our final
+configuration, 512x512 was chosen based off of its significant increase in accuracy, with minimal decrease in
+inference speed (1ms slower).
+
+In terms of batch size, it was left unchanged from the baseline model (16) as the slight increase in 
+inference speed was not worth in trading recall performance. Configuration details of the final model are
+summarized in Table \ref{tab:final}, and can be found in the Google Drive link from the abstract.
 
 \begin{table}[h]
 \centering
@@ -315,23 +471,31 @@ TODO: Talk about how we have selected the yolov8s model wiht 512 px as are final
 \hline
 \textbf{Parameter} & \textbf{Value} \\
 \hline
-Base Model & yolov8s \\
-Input Resolution & 512x512 pixels \\
-Precision & 93.8\% \\
-Recall & 93.0\% \\
-mAP@0.5 & 96.2\% \\
-mAP@0.5:0.95 & 84.3\% \\
-Inference Time & 237ms \\
+Base Model & YOLOv11s \\
+Input Resolution & 512x512 px\\
+Name & YOLOv11s\_IS512\\
 \hline
 \end{tabular}
 \end{table}
 
+\subsection{Results and Real Time Performance}
+TODO: make sure this makes sense
 
-\subsection{Real Time Performance}
+The final model, YOLOv11s\_IS512, was able to predict stop signs and speed signs with greater than 90\% accuracy. 
+Traffic lights however remained a greater challenge to accurately detect and predict.
+When running real time detection using the laptop's webcam, the system performed smoothly with minimal lag (on average 5ms inference time), 
+making it responsive enough for practical use. A collage of images used for validation, classified and showing 
+the model's confidence score is shown in Figure \ref{fig:pic}.
 
-After training, which took some time as the model adjusted and optimized the weights for each class, the test script ran smoothly. The model was able to predict stop signs and other traffic signs with around 70 to 80 percent accuracy. When running real time detection using the laptop's webcam, the system performed smoothly with minimal lag, making it responsive enough for practical use. Testing was done on a standard laptop without a dedicated GPU, which shows that YOLOv8's nano version is lightweight enough for everyday hardware.
+\begin{figure}[h]  
+    \centering
+    \includegraphics[width=0.8\linewidth]{images/val_batch2_pred.jpg}  
+    \caption{Validation batch with predictions}
+    \label{fig:pic}
+\end{figure}
 
 \subsection{What Worked and What Didn't}
+TODO: check if this is needed
 
 \textbf{What worked well:}
 \begin{itemize}
@@ -350,8 +514,29 @@ After training, which took some time as the model adjusted and optimized the wei
 %==============================================================================
 \section{Conclusion}
 
-TODO:Conclusion need to be added here  
+We developed a real-time traffic sign and signal detector by
+fine-tuning a pre-trained YOLOv11 model on a 15-class dataset
+of speed limits, traffic lights, and stop signs. The resulting
+system integrates dataset configuration, training, offline evaluation, and webcam inference in a single pipeline using Ultralytics and OpenCV. The main engineering takeaway is that
+transfer learning is essential: a general-purpose COCO model
+does not recognize traffic sign categories, but fine-tuning on
+a task-specific dataset adapts the detector to the desired label
+space. From a deployment perspective, the key requirement is
+balancing accuracy with latency; lightweight YOLOv11 variants
+can remain responsive on commodity hardware while producing meaningful detections for interactive demonstrations.
+Our qualitative analysis highlights the primary limitations of
+the current model: distant signs become too small to detect
+reliably, and speed-limit digits can be ambiguous under blur or
+glare. These observations point to the most promising improvements: collecting more diverse training data, increasing input
+resolution when hardware allows, and incorporating temporal
+smoothing or a dedicated digit-reading stage for speed limits
 
+\section{Team contributions:} 
+\begin{itemize}
+    \item Longric Tran: model training, testing outline and implementation
+    \item Sheel Patel: dataset selection and configuration, testing analysis
+    \item Hareesh Suresh: webcam inference pipeline, testing analysis
+\end{itemize}
 
 %==============================================================================
 % REFERENCES
