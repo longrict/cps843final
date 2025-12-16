@@ -182,10 +182,29 @@ YOLOv11s & yolov11s\_BS8 & 50 & 416 & 8 \\
 \end{tabular}
 \end{table}
 \subsection{Evaluation Metrics}
-TODO: talk about mAP, precision, inference time etc. and why they're important to the model we choose
-\subsection{Real-Time Detection}
+To compare model configurations fairly, we evaluated each trained detector using four core metrics reported by the Ultralytics validation script: precision, recall, mean Average Precision (mAP), and inference time.
 
-TODO: This section needs to be done
+\textbf{Precision} measures how often a predicted detection is correct:
+\[
+\text{Precision}=\frac{TP}{TP+FP}.
+\]
+High precision means the model produces fewer false positives (e.g., drawing a box on a background object that looks like a sign). This matters in real-time systems because frequent false alarms make the overlay unusable and would be unsafe in an ADAS-style application.
+
+\textbf{Recall} measures how many real objects are successfully detected:
+\[
+\text{Recall}=\frac{TP}{TP+FN}.
+\]
+High recall is important because missed detections (false negatives) are more costly for traffic infrastructure: failing to detect a stop sign or a red light is worse than producing an occasional extra box.
+
+\textbf{mAP} summarizes detection quality across confidence thresholds using the precision--recall curve. We report \textbf{mAP@0.5} (IoU threshold 0.5), which is a standard ``easier'' criterion for object detection, and is useful for comparing overall detector performance. In general, higher mAP indicates the model is both finding the right objects and placing the bounding boxes in roughly the correct region.
+
+\textbf{Inference time} (reported in milliseconds per image) captures latency, which directly affects real-time usability. Even if a model is slightly more accurate, a large increase in inference time can reduce frame rate and make the webcam demo laggy. Therefore, the final model selection was made by balancing mAP/precision/recall with inference time, rather than optimizing accuracy alone.
+
+\subsection{Results and Real Time Performance}
+Using the configuration selected in Table \ref{tab:final}, the final model (YOLOv11s\_IS512) achieved strong overall detection accuracy while keeping inference time low enough for live streaming. Across offline evaluation, the model performed best on speed limit and stop sign categories, while traffic light state detection remained the most challenging class group, consistent with the per-class analysis in Table \ref{tab:map_class} and the confusion matrix in Figure \ref{fig:confusionmatrix}.
+
+For real-time testing, we ran webcam inference with the same trained weights and observed smooth performance with minimal perceived delay. The measured per-frame inference time is on the order of a few milliseconds (Table \ref{tab:imagesizeinference}), and the end-to-end webcam loop remained responsive on our hardware. Figure \ref{fig:pic} shows an example validation batch with predicted boxes and confidence scores, illustrating typical detections produced by the final model.
+
 %==============================================================================
 % EXPERIMENTS
 %==============================================================================
@@ -479,7 +498,10 @@ Name & YOLOv11s\_IS512\\
 \end{table}
 
 \subsection{Results and Real Time Performance}
-TODO: make sure this makes sense
+Using the configuration selected in Table \ref{tab:final}, the final model (YOLOv11s\_IS512) achieved strong overall detection accuracy while keeping inference time low enough for live streaming. Across offline evaluation, the model performed best on speed limit and stop sign categories, while traffic light state detection remained the most challenging class group, consistent with the per-class analysis in Table \ref{tab:map_class} and the confusion matrix in Figure \ref{fig:confusionmatrix}.
+
+For real-time testing, we ran webcam inference with the same trained weights and observed smooth performance with minimal perceived delay. The measured per-frame inference time is on the order of a few milliseconds (Table \ref{tab:imagesizeinference}), and the end-to-end webcam loop remained responsive on our hardware. Figure \ref{fig:pic} shows an example validation batch with predicted boxes and confidence scores, illustrating typical detections produced by the final model.
+
 
 The final model, YOLOv11s\_IS512, was able to predict stop signs and speed signs with greater than 90\% accuracy. 
 Traffic lights however remained a greater challenge to accurately detect and predict.
@@ -494,14 +516,22 @@ the model's confidence score is shown in Figure \ref{fig:pic}.
     \label{fig:pic}
 \end{figure}
 
-\subsection{What Worked and What Didn't}
-TODO: check if this is needed
 
+\subsection{What Worked and What Didn't}
 \textbf{What worked well:}
 \begin{itemize}
-    \item Regulatory signs (like stop signs) were detected reliably. They have distinctive shapes and colours, and were spotted from various angles.
-    \item TODO:add the other things that work. I was only able to test it with a stop sign 
+    \item \textbf{Stop signs} were detected extremely reliably across configurations (near-perfect mAP@0.5). Their distinctive octagonal shape and high-contrast appearance create strong features for the detector.
+    \item \textbf{Speed limit signs} generally achieved high performance (often $>90\%$ mAP@0.5 on average). The circular outline and consistent formatting likely helped generalization.
+    \item \textbf{Higher input resolution (512px)} improved performance for smaller objects, increasing recall and mAP for most models at the cost of a modest inference-time increase.
 \end{itemize}
+
+\textbf{Challenges we encountered:}
+\begin{itemize}
+    \item \textbf{Traffic lights} were the hardest category. Red vs. green states share the same geometry and are often small in the frame, making them easier to confuse or miss under glare and exposure changes.
+    \item \textbf{Small/far signs} were missed more often due to limited pixel detail, especially at 320px input resolution.
+    \item \textbf{Phone-screen testing} was inconsistent (reflections, moir\'e patterns, and brightness differences). Detections were most reliable only when the phone was held close and directly facing the camera.
+\end{itemize}
+
 
 \textbf{Challenges we encountered:}
 \begin{itemize}
